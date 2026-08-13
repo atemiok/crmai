@@ -9,7 +9,7 @@ import {
 import { brief, drainAll, taskAuth } from "../lib/dispatch";
 
 export default defineSchedule({
-	cron: "* * * * *",
+	cron: "0 0 * * *",
 	async run({ receive, waitUntil, appAuth }) {
 		waitUntil(
 			Promise.all([
