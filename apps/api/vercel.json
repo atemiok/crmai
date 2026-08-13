@@ -1,13 +1,5 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": null,
-  "bunVersion": "1.x",
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/api/index"
-    }
-  ],
   "crons": [
     {
       "path": "/internal/sync/mailboxes",
