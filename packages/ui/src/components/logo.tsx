@@ -1,29 +1,26 @@
 import type * as React from "react";
 
-const Logo = (props: React.SVGProps<SVGSVGElement>) => (
+const Logo = ({
+	className,
+	...props
+}: React.SVGProps<SVGSVGElement>) => (
 	<svg
 		xmlns="http://www.w3.org/2000/svg"
 		width={512}
 		height={512}
 		viewBox="0 0 512 512"
 		fill="none"
-		aria-label="Boafo Logo"
+		aria-label="Boafo CRM Logo"
+		role="img"
+		className={["dark:invert", className].filter(Boolean).join(" ")}
 		{...props}
 	>
-		<path
-			fillRule="evenodd"
-			clipRule="evenodd"
-			d="M459 165L457 163L419 154L407 141L394 133L382 130L369 130L354 134L342 141L329 155L318 172L296 187L265 198L250 201L229 202L194 197L154 184L119 169L67 141L72 159L85 185L115 228L135 249L163 272L192 288L206 293L199 309L195 325L195 340L198 351L219 349L246 350L249 353L249 357L254 365L265 374L259 379L260 381L302 380L318 386L325 394L325 381L332 383L342 391L342 386L338 381L328 375L314 372L302 372L298 370L289 362L290 356L292 354L315 350L338 340L359 326L377 309L394 284L405 256L409 235L410 200L416 177L422 173ZM265 357L270 354L280 366L287 369L288 372L283 374L274 372L266 366L264 362Z"
-			fill="currentColor"
+		<image
+			href="/boafo-bird.png"
+			width="512"
+			height="512"
+			preserveAspectRatio="xMidYMid meet"
 		/>
-		<path
-			d="M302 210C333 207 350 226 347 249C343 281 310 302 252 305"
-			stroke="currentColor"
-			strokeOpacity="0.18"
-			strokeWidth="2.5"
-			strokeLinecap="round"
-		/>
-		<circle cx="388" cy="159" r="7" fill="var(--background, white)" />
 	</svg>
 );
 

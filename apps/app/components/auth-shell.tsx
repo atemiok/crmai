@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Logo from "@crm/ui/components/logo";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { AuthShader } from "@/components/auth-shader";
@@ -10,14 +10,9 @@ export function AuthShell({ children }: { children: ReactNode }) {
 				<AuthShader />
 
 				<div className="relative flex gap-2 text-sm/5">
-					<Link href="/" aria-label="Boafo CRM" className="flex items-center">
-						<Image
-							src="/boafo-logo-light.svg"
-							alt="Boafo"
-							width={200}
-							height={60}
-							className="h-8 w-auto"
-						/>
+					<Link href="/" aria-label="Boafo CRM" className="flex items-center gap-2">
+						<Logo className="size-7 shrink-0" />
+						<span className="font-semibold">Boafo CRM</span>
 					</Link>
 				</div>
 
@@ -47,13 +42,7 @@ export function AuthShell({ children }: { children: ReactNode }) {
 
 			<section className="flex min-h-svh flex-col bg-background px-6 py-8 sm:px-10 lg:px-14">
 				<div className="flex gap-2 text-sm/5 max-lg:hidden lg:invisible">
-					<Image
-						src="/boafo-logo-light.svg"
-						alt=""
-						width={200}
-						height={60}
-						className="h-8 w-auto"
-					/>
+					<Logo className="size-7 shrink-0" />
 				</div>
 
 				<div className="flex flex-1 items-center justify-center py-12">
@@ -73,14 +62,9 @@ export function AuthHeading({
 }) {
 	return (
 		<div className="flex flex-col gap-3 text-left">
-			<Link href="/" aria-label="Boafo CRM" className="flex items-center">
-				<Image
-					src="/boafo-logo-light.svg"
-					alt="Boafo"
-					width={200}
-					height={60}
-					className="h-9 w-auto"
-				/>
+			<Link href="/" aria-label="Boafo CRM" className="flex items-center gap-2">
+				<Logo className="size-8 shrink-0" />
+				<span className="font-semibold">Boafo CRM</span>
 			</Link>
 			<div className="flex flex-col gap-1">
 				<h2 className="text-2xl/8 font-semibold tracking-tight text-balance">
