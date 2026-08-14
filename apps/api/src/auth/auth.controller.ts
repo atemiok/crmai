@@ -1,5 +1,9 @@
-import type { auth } from "@crm/auth";
-import { Controller, Get } from "@nestjs/common";
+import {
+	hasSignInAllowList,
+	isWorkspaceEmail,
+	type auth,
+} from "@crm/auth";
+import { Controller, Get, Query } from "@nestjs/common";
 import {
 	OptionalAuth,
 	Session,
@@ -29,6 +33,16 @@ export class AuthController {
 			authenticated: true,
 			user: { id: session.user.id, email: session.user.email },
 			expiresAt: session.session.expiresAt,
+		};
+	}
+
+	@Get("signup-preflight")
+	@OptionalAuth()
+	getSignupPreflight(@Query("email") email?: string) {
+		return {
+			allowListConfigured: hasSignInAllowList(),
+			emailAllowed: isWorkspaceEmail(email),
+			emailPasswordEnabled: true,
 		};
 	}
 }
