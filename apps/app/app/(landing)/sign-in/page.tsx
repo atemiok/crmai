@@ -61,7 +61,19 @@ async function SignIn({
 	]);
 
 	if (session) {
-		redirect("/");
+		const workspace = await getServerQueryClient()
+			.fetchQuery(getServerTrpc().workspace.get.queryOptions())
+			.catch((error: unknown) => {
+				unstable_rethrow(error);
+				console.error("Sign-in: could not read the workspace.", error);
+				return null;
+			});
+
+		if (workspace?.slug) {
+			redirect(`/${workspace.slug}`);
+		}
+
+		redirect("/onboarding");
 	}
 
 	const configured: MailboxProviderId[] = [];
