@@ -49,11 +49,20 @@ const slackCredentials = ():
 const apiUrl =
 	optional("API_URL") ?? optional("BETTER_AUTH_URL") ?? DEFAULT_API_URL;
 
-const appUrls = (optional("APP_URL") ?? DEFAULT_APP_URL)
+const configuredAppUrls = (optional("APP_URL") ?? DEFAULT_APP_URL)
 	.split(",")
 	.map((origin) => origin.trim())
 	.filter(Boolean);
 
+const replitAppUrls = [
+	optional("REPLIT_DEV_DOMAIN"),
+	...(optional("REPLIT_DOMAINS") ?? "").split(","),
+]
+.filter((domain): domain is string => Boolean(domain?.trim()))
+.map((domain) => domain.trim())
+	.map((domain) => (domain.includes("://") ? domain : `https://${domain}`));
+
+const appUrls = [...new Set([...configuredAppUrls, ...replitAppUrls])];
 const appUrl = appUrls[0] ?? DEFAULT_APP_URL;
 
 export const env = {
