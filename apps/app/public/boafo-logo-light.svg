@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" width="200" height="60">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&amp;display=swap');
+    </style>
+  </defs>
+  <!-- Light version (for dark backgrounds) -->
+  <g id="light">
+    <text x="10" y="45" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="42" fill="#ffffff" letter-spacing="-0.02em">Boafo</text>
+    <text x="148" y="45" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="42" fill="#4f46e5" letter-spacing="-0.02em">.</text>
+  </g>
+</svg>

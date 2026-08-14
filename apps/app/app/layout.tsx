@@ -24,7 +24,8 @@ export const metadata: Metadata = {
 		default: "Boafo CRM",
 		template: "%s · Boafo CRM",
 	},
-	description: "AI-powered customer relationship management by Boafo Solutions.",
+	description:
+		"AI-powered customer relationship management by Boafo Solutions.",
 	icons: {
 		icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
 	},
