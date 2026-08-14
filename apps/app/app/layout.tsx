@@ -21,16 +21,12 @@ const fontMono = Geist_Mono({
 
 export const metadata: Metadata = {
 	title: {
-		default: "Comp AI - CRM",
-		template: "%s · Comp AI CRM",
+		default: "Boafo CRM",
+		template: "%s · Boafo CRM",
 	},
-	description: "Customer Relationship Management for Comp AI",
+	description: "AI-powered customer relationship management by Boafo Solutions.",
 	icons: {
-		icon: [
-			{ url: "/favicon.svg", type: "image/svg+xml" },
-			{ url: "/favicon-96x96.png", type: "image/png", sizes: "96x96" },
-		],
-		apple: "/apple-touch-icon.png",
+		icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
 	},
 	manifest: "/site.webmanifest",
 };

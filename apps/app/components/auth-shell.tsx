@@ -10,15 +10,16 @@ export function AuthShell({ children }: { children: ReactNode }) {
 				<AuthShader />
 
 				<div className="relative flex gap-2 text-sm/5">
-					<Link href="/" aria-label="Homepage" className="flex">
+					<Link href="/" aria-label="Boafo CRM" className="flex items-center gap-2">
 						<Logo className="size-5 shrink-0" />
+						<span className="font-semibold">Boafo CRM</span>
 					</Link>
 				</div>
 
 				<div className="relative flex max-w-lg flex-col gap-8">
 					<div className="flex flex-col gap-4">
 						<p className="font-mono text-xs/4 text-muted-foreground uppercase">
-							CRM
+							Boafo CRM
 						</p>
 						<h1 className="max-w-[14ch] text-5xl/14 font-semibold text-balance">
 							Every customer, one place.
@@ -27,14 +28,14 @@ export function AuthShell({ children }: { children: ReactNode }) {
 				</div>
 
 				<p className="relative font-mono text-xs/4 text-muted-foreground">
-					Made with love by{" "}
+					Built with love by{" "}
 					<a
-						href="https://trycomp.ai"
+						href="https://boafosolutions.com"
 						target="_blank"
 						rel="noreferrer"
 						className="underline underline-offset-4 hover:text-foreground"
 					>
-						Comp AI
+						Boafo Solutions
 					</a>
 				</p>
 			</section>
@@ -61,8 +62,9 @@ export function AuthHeading({
 }) {
 	return (
 		<div className="flex flex-col gap-3 text-left">
-			<Link href="/" aria-label="Homepage" className="flex">
+			<Link href="/" aria-label="Boafo CRM" className="flex items-center gap-2">
 				<Logo className="size-6 shrink-0" />
+				<span className="font-semibold">Boafo CRM</span>
 			</Link>
 			<div className="flex flex-col gap-1">
 				<h2 className="text-2xl/8 font-semibold tracking-tight text-balance">
