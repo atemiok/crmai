@@ -15,7 +15,26 @@ function liveDatabase(): string {
 		);
 	}
 
-	return url;
+	return normalizeSslMode(url);
+}
+
+function normalizeSslMode(url: string): string {
+	try {
+		const parsed = new URL(url);
+		const sslMode = parsed.searchParams.get("sslmode");
+
+		if (
+			sslMode === "prefer" ||
+			sslMode === "require" ||
+			sslMode === "verify-ca"
+		) {
+			parsed.searchParams.set("sslmode", "verify-full");
+		}
+
+		return parsed.toString();
+	} catch {
+		return url;
+	}
 }
 
 function testDatabase(): string {
