@@ -34,7 +34,7 @@ export function EmailPasswordSignIn() {
 
 			if (mode === "sign-up") {
 				const preflight = await fetch(
-					`/api/auth/signup-preflight?email=${encodeURIComponent(normalizedEmail)}`,
+					`/api/signup-preflight?email=${encodeURIComponent(normalizedEmail)}`,
 					{ cache: "no-store" },
 				);
 
@@ -189,7 +189,10 @@ export function EmailPasswordSignIn() {
 				) : null}
 
 				{formError ? (
-					<p className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-xs text-destructive" role="alert">
+					<p
+						className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-xs text-destructive"
+						role="alert"
+					>
 						{formError}
 					</p>
 				) : null}
