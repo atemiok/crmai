@@ -28,7 +28,6 @@ export function EmailPasswordSignIn() {
 		setPending(true);
 
 		try {
-			const origin = window.location.origin;
 			const normalizedEmail = email.trim().toLowerCase();
 
 			if (mode === "sign-up") {
@@ -36,7 +35,6 @@ export function EmailPasswordSignIn() {
 					name: name.trim(),
 					email: normalizedEmail,
 					password,
-					callbackURL: `${origin}/`,
 				});
 
 				if (error) {
@@ -48,7 +46,6 @@ export function EmailPasswordSignIn() {
 					email: normalizedEmail,
 					password,
 					rememberMe: true,
-					callbackURL: `${origin}/`,
 				});
 
 				if (error) {
