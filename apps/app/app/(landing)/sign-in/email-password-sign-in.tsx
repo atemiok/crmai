@@ -1,6 +1,6 @@
 "use client";
 
-import { authClient, signIn } from "@crm/auth/client";
+import { signIn } from "@crm/auth/client";
 import { Button } from "@crm/ui/components/button";
 import { Input } from "@crm/ui/components/input";
 import { Label } from "@crm/ui/components/label";
@@ -16,12 +16,14 @@ export function EmailPasswordSignIn() {
 	const [confirmPassword, setConfirmPassword] = useState("");
 	const [showPassword, setShowPassword] = useState(false);
 	const [pending, setPending] = useState(false);
+	const [formError, setFormError] = useState<string | null>(null);
 
 	async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
+		setFormError(null);
 
 		if (mode === "sign-up" && password !== confirmPassword) {
-			toast.error("Passwords do not match.");
+			setFormError("Passwords do not match.");
 			return;
 		}
 
@@ -31,14 +33,50 @@ export function EmailPasswordSignIn() {
 			const normalizedEmail = email.trim().toLowerCase();
 
 			if (mode === "sign-up") {
-				const { error } = await authClient.signUp.email({
-					name: name.trim(),
-					email: normalizedEmail,
-					password,
+				const preflight = await fetch(
+					`/api/auth/signup-preflight?email=${encodeURIComponent(normalizedEmail)}`,
+					{ cache: "no-store" },
+				);
+
+				if (!preflight.ok) {
+					setFormError(`Signup preflight failed (HTTP ${preflight.status}).`);
+					return;
+				}
+
+				const preflightData = (await preflight.json()) as {
+					allowListConfigured?: boolean;
+					emailAllowed?: boolean;
+				};
+
+				if (!preflightData.allowListConfigured) {
+					setFormError(
+						"Account creation is disabled because the API allow-list is not configured.",
+					);
+					return;
+				}
+
+				if (!preflightData.emailAllowed) {
+					setFormError(
+						`${normalizedEmail} is not allowed by the API sign-in allow-list.`,
+					);
+					return;
+				}
+
+				const response = await fetch("/api/auth/sign-up/email", {
+					method: "POST",
+					headers: { "content-type": "application/json" },
+					body: JSON.stringify({
+						name: name.trim(),
+						email: normalizedEmail,
+						password,
+					}),
 				});
 
-				if (error) {
-					toast.error(error.message ?? "Could not create the account.");
+				const body = await readResponseBody(response);
+				if (!response.ok) {
+					setFormError(
+						`${extractErrorMessage(body) ?? "Could not create the account."} (HTTP ${response.status})`,
+					);
 					return;
 				}
 			} else {
@@ -49,14 +87,18 @@ export function EmailPasswordSignIn() {
 				});
 
 				if (error) {
-					toast.error(error.message ?? "Email or password is incorrect.");
+					const message = error.message ?? "Email or password is incorrect.";
+					setFormError(message);
 					return;
 				}
 			}
 
 			window.location.assign("/");
-		} catch {
-			toast.error("Could not reach the sign-in service.");
+		} catch (error) {
+			const message =
+				error instanceof Error ? error.message : "Could not reach the sign-in service.";
+			setFormError(message);
+			toast.error(message);
 		} finally {
 			setPending(false);
 		}
@@ -146,6 +188,12 @@ export function EmailPasswordSignIn() {
 					</p>
 				) : null}
 
+				{formError ? (
+					<p className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-xs text-destructive" role="alert">
+						{formError}
+					</p>
+				) : null}
+
 				<Button type="submit" disabled={pending} className="mt-1 w-full">
 					{pending ? <Spinner data-icon="inline-start" /> : null}
 					{mode === "sign-up" ? "Create account" : "Sign in with email"}
@@ -160,6 +208,7 @@ export function EmailPasswordSignIn() {
 					setPassword("");
 					setConfirmPassword("");
 					setShowPassword(false);
+					setFormError(null);
 				}}
 			>
 				{mode === "sign-in"
@@ -168,4 +217,24 @@ export function EmailPasswordSignIn() {
 			</button>
 		</div>
 	);
+}
+
+async function readResponseBody(response: Response): Promise<unknown> {
+	const contentType = response.headers.get("content-type") ?? "";
+	if (contentType.includes("application/json")) {
+		return response.json().catch(() => null);
+	}
+	return response.text().catch(() => null);
+}
+
+function extractErrorMessage(body: unknown): string | null {
+	if (typeof body === "string" && body.trim()) return body.trim();
+	if (!body || typeof body !== "object" || Array.isArray(body)) return null;
+
+	for (const key of ["message", "error", "code"] as const) {
+		const value = Reflect.get(body, key);
+		if (typeof value === "string" && value.trim()) return value.trim();
+	}
+
+	return null;
 }
