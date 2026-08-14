@@ -1,21 +1,12 @@
+<h1 align="center">Boafo CRM</h1>
+
 <p align="center">
-  <a href="https://link.context.dev/crm">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="./docs/images/powered-by-context-dark.png">
-      <img alt="Powered by Context" height="23" src="./docs/images/powered-by-context.png">
-    </picture>
-  </a>
+  <strong>AI-powered CRM by Boafo Solutions.</strong><br>
+  Customer relationships, pipeline and agentic workflows in one place.
 </p>
 
 <p align="center">
-  <img alt="stars" height="21" src="https://afterglow.watch/badge/trycompai/crm">
-</p>
-
-<h1 align="center">CRM</h1>
-
-<p align="center">
-  <strong>Comp AI CRM is an open source, CRM designed for AI agents.</strong><br>
-  Agentic-first CRM.
+  <a href="https://boafosolutions.com"><strong>boafosolutions.com</strong></a>
 </p>
 
 <p align="center">
@@ -23,8 +14,7 @@
   <a href="#the-stack"><strong>Stack</strong></a> ·
   <a href="#quick-start"><strong>Quick start</strong></a> ·
   <a href="#configuration"><strong>Configuration</strong></a> ·
-  <a href="#deploying"><strong>Deploying</strong></a> ·
-  <a href="./CONTRIBUTING.md"><strong>Contributing</strong></a>
+  <a href="#deploying"><strong>Deploying</strong></a>
 </p>
 
 <p align="center">
@@ -190,7 +180,7 @@ Written up where the work happens, not in a style guide:
 You need [Bun](https://bun.com) and Docker.
 
 ```sh
-git clone https://github.com/trycompai/crm.git && cd crm
+git clone https://github.com/atemiok/crmai.git && cd crmai
 cp .env.example .env          # then fill in the values below
 bun install
 
@@ -204,10 +194,7 @@ bun run dev
 The app is on [localhost:3000](http://localhost:3000), the API on
 [localhost:3001](http://localhost:3001).
 
-That clone gives you `release`, the default branch and the last tagged release — what you
-want if you are running this. `main` is where unreleased work lands: green, but not cut
-yet. If you are here to send a pull request, `git switch main` first and read
-[CONTRIBUTING](./CONTRIBUTING.md).
+This repository uses `release` for the deployed Boafo CRM application.
 
 ### The values to set
 
@@ -356,8 +343,7 @@ commit it with the router change that caused it.
 
 ## Contributing
 
-We'd rather have a paragraph you wrote than a pull request an agent wrote. See
-[CONTRIBUTING.md](./CONTRIBUTING.md).
+See [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 Security issues go through [SECURITY.md](./SECURITY.md), privately, not a public
 issue.

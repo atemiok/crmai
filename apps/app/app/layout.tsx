@@ -27,7 +27,8 @@ export const metadata: Metadata = {
 	description:
 		"AI-powered customer relationship management by Boafo Solutions.",
 	icons: {
-		icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
+		icon: [{ url: "/boafo-bird.png", type: "image/png", sizes: "128x128" }],
+		apple: [{ url: "/boafo-bird.png", sizes: "128x128" }],
 	},
 	manifest: "/site.webmanifest",
 };

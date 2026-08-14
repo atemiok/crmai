@@ -3,9 +3,9 @@
 	"short_name": "Boafo CRM",
 	"icons": [
 		{
-			"src": "/favicon.svg",
-			"sizes": "any",
-			"type": "image/svg+xml",
+			"src": "/boafo-bird.png",
+			"sizes": "128x128",
+			"type": "image/png",
 			"purpose": "any"
 		}
 	],
