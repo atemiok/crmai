@@ -72,7 +72,7 @@ export const auth = betterAuth({
 	}),
 
 	emailAndPassword: {
-		enabled: false,
+		enabled: true,
 	},
 
 	socialProviders,
@@ -200,7 +200,6 @@ export const auth = betterAuth({
 									} catch {
 										return null;
 									}
-								},
 							},
 						],
 					}),
