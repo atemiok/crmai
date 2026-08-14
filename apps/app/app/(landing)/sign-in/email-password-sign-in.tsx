@@ -13,19 +13,46 @@ export function EmailPasswordSignIn() {
 	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
+	const [confirmPassword, setConfirmPassword] = useState("");
 	const [pending, setPending] = useState(false);
+
+	function switchMode(nextMode: "sign-in" | "sign-up") {
+		setMode(nextMode);
+		setPassword("");
+		setConfirmPassword("");
+	}
 
 	async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
+
+		const normalizedEmail = email.trim().toLowerCase();
+		const normalizedName = name.trim();
+
+		if (mode === "sign-up") {
+			if (!normalizedName) {
+				toast.error("Enter your name.");
+				return;
+			}
+
+			if (password.length < 8) {
+				toast.error("Password must be at least 8 characters.");
+				return;
+			}
+
+			if (password !== confirmPassword) {
+				toast.error("Passwords do not match.");
+				return;
+			}
+		}
+
 		setPending(true);
 
 		try {
 			const origin = window.location.origin;
-			const normalizedEmail = email.trim().toLowerCase();
 
 			if (mode === "sign-up") {
 				const { error } = await authClient.signUp.email({
-					name: name.trim(),
+					name: normalizedName,
 					email: normalizedEmail,
 					password,
 					callbackURL: `${origin}/`,
@@ -62,7 +89,7 @@ export function EmailPasswordSignIn() {
 			<form className="flex flex-col gap-3" onSubmit={handleSubmit}>
 				{mode === "sign-up" ? (
 					<div className="flex flex-col gap-1.5">
-						<Label htmlFor="name">Name</Label>
+						<Label htmlFor="name">Full name</Label>
 						<Input
 							id="name"
 							autoComplete="name"
@@ -74,7 +101,7 @@ export function EmailPasswordSignIn() {
 				) : null}
 
 				<div className="flex flex-col gap-1.5">
-					<Label htmlFor="email">Email</Label>
+					<Label htmlFor="email">Email address</Label>
 					<Input
 						id="email"
 						type="email"
@@ -98,7 +125,27 @@ export function EmailPasswordSignIn() {
 						onChange={(event) => setPassword(event.target.value)}
 						required
 					/>
+					{mode === "sign-up" ? (
+						<p className="text-[11px] text-muted-foreground">
+							Use at least 8 characters.
+						</p>
+					) : null}
 				</div>
+
+				{mode === "sign-up" ? (
+					<div className="flex flex-col gap-1.5">
+						<Label htmlFor="confirm-password">Confirm password</Label>
+						<Input
+							id="confirm-password"
+							type="password"
+							autoComplete="new-password"
+							minLength={8}
+							value={confirmPassword}
+							onChange={(event) => setConfirmPassword(event.target.value)}
+							required
+						/>
+					</div>
+				) : null}
 
 				<Button type="submit" disabled={pending} className="mt-1 w-full">
 					{pending ? <Spinner data-icon="inline-start" /> : null}
@@ -109,10 +156,12 @@ export function EmailPasswordSignIn() {
 			<button
 				type="button"
 				className="text-center text-xs text-muted-foreground underline underline-offset-4 hover:text-foreground"
-				onClick={() => setMode(mode === "sign-in" ? "sign-up" : "sign-in")}
+				onClick={() =>
+					switchMode(mode === "sign-in" ? "sign-up" : "sign-in")
+				}
 			>
 				{mode === "sign-in"
-					? "First time here? Create account"
+					? "New to Boafo CRM? Create an account"
 					: "Already have an account? Sign in"}
 			</button>
 		</div>
