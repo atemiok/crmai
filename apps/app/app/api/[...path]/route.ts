@@ -24,6 +24,12 @@ async function handler(request: Request): Promise<Response> {
 		headers.delete(header);
 	}
 
+	if (url.pathname.startsWith("/api/auth/")) {
+		const apiOrigin = new URL(API_URL).origin;
+		headers.set("origin", apiOrigin);
+		headers.set("referer", `${apiOrigin}/`);
+	}
+
 	const init: RequestInit & { duplex?: "half" } = {
 		method: request.method,
 		headers,
