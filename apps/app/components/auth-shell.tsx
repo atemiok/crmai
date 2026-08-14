@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { AuthShader } from "@/components/auth-shader";
@@ -10,9 +11,11 @@ export function AuthShell({ children }: { children: ReactNode }) {
 
 				<div className="relative flex gap-2 text-sm/5">
 					<Link href="/" aria-label="Boafo CRM" className="flex items-center">
-						<img
+						<Image
 							src="/boafo-logo-light.svg"
 							alt="Boafo"
+							width={200}
+							height={60}
 							className="h-8 w-auto"
 						/>
 					</Link>
@@ -44,9 +47,11 @@ export function AuthShell({ children }: { children: ReactNode }) {
 
 			<section className="flex min-h-svh flex-col bg-background px-6 py-8 sm:px-10 lg:px-14">
 				<div className="flex gap-2 text-sm/5 max-lg:hidden lg:invisible">
-					<img
+					<Image
 						src="/boafo-logo-light.svg"
 						alt=""
+						width={200}
+						height={60}
 						className="h-8 w-auto"
 					/>
 				</div>
@@ -69,9 +74,11 @@ export function AuthHeading({
 	return (
 		<div className="flex flex-col gap-3 text-left">
 			<Link href="/" aria-label="Boafo CRM" className="flex items-center">
-				<img
+				<Image
 					src="/boafo-logo-light.svg"
 					alt="Boafo"
+					width={200}
+					height={60}
 					className="h-9 w-auto"
 				/>
 			</Link>
