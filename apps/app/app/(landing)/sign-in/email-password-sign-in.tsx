@@ -90,7 +90,9 @@ export function EmailPasswordSignIn() {
 					<Input
 						id="password"
 						type="password"
-						autoComplete={mode === "sign-up" ? "new-password" : "current-password"}
+						autoComplete={
+							mode === "sign-up" ? "new-password" : "current-password"
+						}
 						minLength={8}
 						value={password}
 						onChange={(event) => setPassword(event.target.value)}
