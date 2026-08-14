@@ -200,6 +200,7 @@ export const auth = betterAuth({
 									} catch {
 										return null;
 									}
+								},
 							},
 						],
 					}),
