@@ -1,0 +1,29 @@
+kind = "web"
+previewPath = "/"
+title = "Boafo CRM"
+description = "A full-featured CRM web application for managing companies, contacts, deals, and agent-powered research. Includes workspace-based multi-tenancy, authentication, dashboards, pipeline management, and an AI agent builder. Built for sales and customer relationship teams."
+version = "1.0.0"
+id = "artifacts/crm"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 22444
+
+[services.development]
+run = "pnpm --filter @workspace/crm run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/crm", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/crm/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "22444"
+BASE_PATH = "/"
+API_URL = "http://localhost:80"

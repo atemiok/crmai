@@ -1,0 +1,9 @@
+{
+  "name": "@workspace/crm",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "cd ../../.migration-backup && bun --cwd apps/app dev"
+  }
+}

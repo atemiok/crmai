@@ -2,6 +2,8 @@ import { Logger } from "@nestjs/common";
 import { createApp } from "./create-app";
 
 async function bootstrap() {
+process.env.BETTER_AUTH_SECRET ??= process.env.SESSION_SECRET;
+process.env.DATABASE_URL ??= process.env.NEON_DATABASE_URL;
 	const app = await createApp();
 	app.enableShutdownHooks();
 
