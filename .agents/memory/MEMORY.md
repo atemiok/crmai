@@ -1,0 +1,1 @@
+- [Eve on Replit](eve-replit-sandbox.md) — Replit cannot initialize Eve's nested Docker sandbox; use the Replit-only justbash backend while preserving default backend elsewhere.
