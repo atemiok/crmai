@@ -26,6 +26,7 @@ import { slackConnectGuard } from "./slack-connect";
 import { rememberSlackInstall, replaceSlackConnection } from "./slack-grant";
 import { SLACK_REQUESTED_SCOPES, SLACK_USER_SCOPES } from "./slack-scopes";
 import { queueSlackInventorySync } from "./slack-sync";
+import { sendResendVerificationEmail } from "./resend";
 import {
 	hasSignInAllowList,
 	isWorkspaceEmail,
@@ -95,6 +96,15 @@ export const auth = betterAuth({
 		enabled: true,
 		minPasswordLength: PASSWORD_MIN_LENGTH,
 		maxPasswordLength: PASSWORD_MAX_LENGTH,
+		requireEmailVerification: true,
+	},
+
+	emailVerification: {
+		sendOnSignUp: true,
+		expiresIn: 60 * 60 * 24,
+		sendVerificationEmail: async ({ user, url }) => {
+			await sendResendVerificationEmail({ to: user.email, url });
+		},
 	},
 
 	socialProviders,

@@ -1,6 +1,6 @@
 "use client";
 
-import { signIn } from "@crm/auth/client";
+import { sendVerificationEmail, signIn } from "@crm/auth/client";
 import {
 	isStrongPassword,
 	PASSWORD_MAX_LENGTH,
@@ -22,7 +22,36 @@ export function EmailPasswordSignIn() {
 	const [confirmPassword, setConfirmPassword] = useState("");
 	const [showPassword, setShowPassword] = useState(false);
 	const [pending, setPending] = useState(false);
+	const [resendPending, setResendPending] = useState(false);
+	const [signupComplete, setSignupComplete] = useState(false);
 	const [formError, setFormError] = useState<string | null>(null);
+
+	async function handleResendVerification() {
+		setFormError(null);
+		setResendPending(true);
+
+		try {
+			const { error } = await sendVerificationEmail({
+				email: email.trim().toLowerCase(),
+				callbackURL: "/sign-in",
+			});
+
+			if (error) {
+				setFormError(error.message ?? "Could not resend the verification email.");
+				return;
+			}
+
+			toast.success("Verification email sent.");
+		} catch (error) {
+			setFormError(
+				error instanceof Error
+					? error.message
+					: "Could not resend the verification email.",
+			);
+		} finally {
+			setResendPending(false);
+		}
+	}
 
 	async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
@@ -90,6 +119,9 @@ export function EmailPasswordSignIn() {
 					);
 					return;
 				}
+
+				setSignupComplete(true);
+				return;
 			} else {
 				const { error } = await signIn.email({
 					email: normalizedEmail,
@@ -113,6 +145,54 @@ export function EmailPasswordSignIn() {
 		} finally {
 			setPending(false);
 		}
+	}
+
+	if (signupComplete) {
+		return (
+			<div className="flex flex-col gap-4">
+				<div className="rounded-md border border-emerald-500/30 bg-emerald-500/10 px-3 py-3 text-sm">
+					<p className="font-medium">Check your email</p>
+					<p className="mt-1 text-xs text-muted-foreground">
+						We sent a verification link to {email.trim().toLowerCase()}. Confirm
+						your address before signing in.
+					</p>
+				</div>
+
+				{formError ? (
+					<p
+						className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-xs text-destructive"
+						role="alert"
+					>
+						{formError}
+					</p>
+				) : null}
+
+				<Button
+					type="button"
+					variant="outline"
+					disabled={resendPending}
+					onClick={handleResendVerification}
+					className="w-full"
+				>
+					{resendPending ? <Spinner data-icon="inline-start" /> : null}
+					Resend verification email
+				</Button>
+
+				<button
+					type="button"
+					className="text-center text-xs text-muted-foreground underline underline-offset-4 hover:text-foreground"
+					onClick={() => {
+						setSignupComplete(false);
+						setMode("sign-in");
+						setPassword("");
+						setConfirmPassword("");
+						setFormError(null);
+					}}
+				>
+					Return to sign in
+				</button>
+			</div>
+		);
 	}
 
 	return (
