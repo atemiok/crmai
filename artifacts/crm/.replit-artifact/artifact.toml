@@ -15,15 +15,10 @@ localPort = 22444
 run = "pnpm --filter @workspace/crm run dev"
 
 [services.production]
-build = [ "pnpm", "--filter", "@workspace/crm", "run", "build" ]
-serve = "static"
-publicDir = "artifacts/crm/dist/public"
-
-[[services.production.rewrites]]
-from = "/*"
-to = "/index.html"
+build = [ "bash", "-lc", "cd ../../.migration-backup && bun --cwd apps/app build" ]
+run = "cd ../../.migration-backup && bun --cwd apps/app start"
 
 [services.env]
 PORT = "22444"
 BASE_PATH = "/"
-API_URL = "http://localhost:80"
+API_URL = "http://127.0.0.1:8080"
