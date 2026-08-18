@@ -1,1 +1,2 @@
 - [Eve on Replit](eve-replit-sandbox.md) — Replit cannot initialize Eve's nested Docker sandbox; use the Replit-only justbash backend while preserving default backend elsewhere.
+- [Whop connection permissions](whop-connection-permissions.md) — a healthy API-key connection can still lack company-level access needed for billing provisioning.
