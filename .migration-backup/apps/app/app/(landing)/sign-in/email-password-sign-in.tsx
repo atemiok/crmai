@@ -1,6 +1,12 @@
 "use client";
 
 import { signIn } from "@crm/auth/client";
+import {
+	isStrongPassword,
+	PASSWORD_MAX_LENGTH,
+	PASSWORD_MIN_LENGTH,
+	PASSWORD_RULES_MESSAGE,
+} from "@crm/validation";
 import { Button } from "@crm/ui/components/button";
 import { Input } from "@crm/ui/components/input";
 import { Label } from "@crm/ui/components/label";
@@ -27,6 +33,11 @@ export function EmailPasswordSignIn() {
 			return;
 		}
 
+		if (mode === "sign-up" && !isStrongPassword(password)) {
+			setFormError(PASSWORD_RULES_MESSAGE);
+			return;
+		}
+
 		setPending(true);
 
 		try {
@@ -34,7 +45,7 @@ export function EmailPasswordSignIn() {
 
 			if (mode === "sign-up") {
 				const preflight = await fetch(
-					`/api/signup-preflight?email=${encodeURIComponent(normalizedEmail)}`,
+					`/signup-preflight?email=${encodeURIComponent(normalizedEmail)}`,
 					{ cache: "no-store" },
 				);
 
@@ -141,7 +152,10 @@ export function EmailPasswordSignIn() {
 							autoComplete={
 								mode === "sign-up" ? "new-password" : "current-password"
 							}
-							minLength={8}
+							minLength={PASSWORD_MIN_LENGTH}
+							maxLength={PASSWORD_MAX_LENGTH}
+							pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{12,128}"
+							title={PASSWORD_RULES_MESSAGE}
 							value={password}
 							onChange={(event) => setPassword(event.target.value)}
 							className="pr-14"
@@ -165,7 +179,10 @@ export function EmailPasswordSignIn() {
 								id="confirm-password"
 								type={showPassword ? "text" : "password"}
 								autoComplete="new-password"
-								minLength={8}
+								minLength={PASSWORD_MIN_LENGTH}
+								maxLength={PASSWORD_MAX_LENGTH}
+								pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{12,128}"
+								title={PASSWORD_RULES_MESSAGE}
 								value={confirmPassword}
 								onChange={(event) => setConfirmPassword(event.target.value)}
 								className="pr-14"
@@ -184,7 +201,7 @@ export function EmailPasswordSignIn() {
 
 				{mode === "sign-up" ? (
 					<p className="text-xs text-muted-foreground">
-						Use at least 8 characters. You can change your password later.
+						{PASSWORD_RULES_MESSAGE}
 					</p>
 				) : null}
 

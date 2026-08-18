@@ -1,5 +1,11 @@
 import type { ZodType, z } from "zod";
 import * as agents from "./agents";
+export {
+	isStrongPassword,
+	PASSWORD_MAX_LENGTH,
+	PASSWORD_MIN_LENGTH,
+	PASSWORD_RULES_MESSAGE,
+} from "./password";
 import * as slack from "./slack";
 
 export const schemas = { agents, slack } as const;

@@ -2,9 +2,15 @@ import { sso } from "@better-auth/sso";
 import { db } from "@crm/db";
 import { type BetterAuthOptions, betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { APIError } from "better-auth/api";
+import { APIError, createAuthMiddleware } from "better-auth/api";
 import { genericOAuth } from "better-auth/plugins/generic-oauth";
 import { organization } from "better-auth/plugins/organization";
+import {
+	isStrongPassword,
+	PASSWORD_MAX_LENGTH,
+	PASSWORD_MIN_LENGTH,
+	PASSWORD_RULES_MESSAGE,
+} from "@crm/validation";
 import { AUTH_COOKIE_PREFIX } from "./cookies";
 import { env } from "./env";
 import { ensureWorkspaceMembership } from "./organization";
@@ -32,6 +38,20 @@ const slackRedirectUri = new URL(
 	"/api/auth/oauth2/callback/slack",
 	env.apiUrl,
 ).toString();
+
+const authBeforeGuard = createAuthMiddleware(async (ctx) => {
+	await slackConnectGuard(ctx);
+
+	if (
+		ctx.path === "/sign-up/email" &&
+		typeof ctx.body?.password === "string" &&
+		!isStrongPassword(ctx.body.password)
+	) {
+		throw new APIError("BAD_REQUEST", {
+			message: PASSWORD_RULES_MESSAGE,
+		});
+	}
+});
 
 if (env.google) {
 	socialProviders.google = {
@@ -73,6 +93,8 @@ export const auth = betterAuth({
 
 	emailAndPassword: {
 		enabled: true,
+		minPasswordLength: PASSWORD_MIN_LENGTH,
+		maxPasswordLength: PASSWORD_MAX_LENGTH,
 	},
 
 	socialProviders,
@@ -112,7 +134,7 @@ export const auth = betterAuth({
 
 	trustedOrigins: [...env.trustedOrigins],
 	hooks: {
-		before: slackConnectGuard,
+		before: authBeforeGuard,
 	},
 
 	plugins: [
