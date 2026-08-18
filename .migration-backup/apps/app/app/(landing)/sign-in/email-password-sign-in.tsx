@@ -74,7 +74,7 @@ export function EmailPasswordSignIn() {
 
 			if (mode === "sign-up") {
 				const preflight = await fetch(
-					`/signup-preflight?email=${encodeURIComponent(normalizedEmail)}`,
+					`/api/signup-preflight?email=${encodeURIComponent(normalizedEmail)}`,
 					{ cache: "no-store" },
 				);
 
@@ -234,7 +234,7 @@ export function EmailPasswordSignIn() {
 							}
 							minLength={PASSWORD_MIN_LENGTH}
 							maxLength={PASSWORD_MAX_LENGTH}
-							pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{12,128}"
+							pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{8,12}"
 							title={PASSWORD_RULES_MESSAGE}
 							value={password}
 							onChange={(event) => setPassword(event.target.value)}
@@ -261,7 +261,7 @@ export function EmailPasswordSignIn() {
 								autoComplete="new-password"
 								minLength={PASSWORD_MIN_LENGTH}
 								maxLength={PASSWORD_MAX_LENGTH}
-								pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{12,128}"
+								pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{8,12}"
 								title={PASSWORD_RULES_MESSAGE}
 								value={confirmPassword}
 								onChange={(event) => setConfirmPassword(event.target.value)}
