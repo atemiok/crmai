@@ -15,8 +15,8 @@ localPort = 22444
 run = "pnpm --filter @workspace/crm run dev"
 
 [services.production]
-build = [ "bash", "-lc", "cd ../../.migration-backup && bun --cwd apps/app build" ]
-run = "cd ../../.migration-backup && bun --cwd apps/app start"
+build = [ "bash", "-lc", "cd .migration-backup && bun --cwd apps/app build" ]
+run = "cd .migration-backup && bun --cwd apps/app start"
 
 [services.env]
 PORT = "22444"
