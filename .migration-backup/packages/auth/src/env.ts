@@ -95,4 +95,4 @@ export function isSlackConfigured(): boolean {
 	return env.slack !== undefined;
 }
 
-export { apiUrl, appUrl };
+export { apiUrl, appUrl, authUrl };
