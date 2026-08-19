@@ -46,6 +46,7 @@ export {
 	signsInWithMicrosoft,
 } from "./scopes";
 export { onSignedIn, type SignedInHandler } from "./signed-in";
+export { checkResendAvailability } from "./resend";
 export {
 	describeSlackScopes,
 	SLACK_REQUESTED_SCOPES,

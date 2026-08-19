@@ -6,6 +6,28 @@ type VerificationEmail = {
 	url: string;
 };
 
+export async function checkResendAvailability(): Promise<{
+	available: boolean;
+	status?: number;
+	details?: string;
+}> {
+	try {
+		const response = await resendRequest("/domains", { method: "GET" });
+		if (response.ok) return { available: true, status: response.status };
+
+		return {
+			available: false,
+			status: response.status,
+			details: (await response.text()).slice(0, 300),
+		};
+	} catch (error) {
+		return {
+			available: false,
+			details: error instanceof Error ? error.message : "Unknown Resend error.",
+		};
+	}
+}
+
 export async function sendResendVerificationEmail({
 	to,
 	url,
@@ -18,8 +40,7 @@ export async function sendResendVerificationEmail({
 		publicUrl.pathname = `/auth/${publicUrl.pathname.slice("/api/auth/".length)}`;
 	}
 
-	const response = await withTimeout(
-		new ReplitConnectors().proxy("resend", "/emails", {
+	const response = await resendRequest("/emails", {
 			method: "POST",
 			headers: { "content-type": "application/json" },
 			body: JSON.stringify({
@@ -33,9 +54,7 @@ export async function sendResendVerificationEmail({
 					publicUrl.toString(),
 				].join("\n\n"),
 			}),
-		}),
-		15_000,
-	);
+	});
 
 	if (response.ok) return;
 
@@ -69,6 +88,28 @@ function escapeHtml(value: string): string {
 		.replaceAll(">", "&gt;")
 		.replaceAll('"', "&quot;")
 		.replaceAll("'", "&#039;");
+}
+
+async function resendRequest(
+	path: string,
+	init: RequestInit,
+): Promise<Response> {
+	const headers = new Headers(init.headers);
+	if (env.resendApiKey) {
+		headers.set("authorization", `Bearer ${env.resendApiKey}`);
+		return withTimeout(
+			fetch(`https://api.resend.com${path}`, { ...init, headers }),
+			15_000,
+		);
+	}
+
+	return withTimeout(
+		new ReplitConnectors().proxy("resend", path, {
+			...init,
+			headers,
+		}),
+		15_000,
+	);
 }
 
 function withTimeout<T>(promise: Promise<T>, milliseconds: number): Promise<T> {

@@ -64,12 +64,14 @@ const replitAppUrls = [
 
 const appUrls = [...new Set([...configuredAppUrls, ...replitAppUrls])];
 const appUrl = appUrls[0] ?? DEFAULT_APP_URL;
+const resendApiKey = optional("RESEND_API_KEY");
 const resendFromEmail =
 	optional("RESEND_FROM_EMAIL") ?? "Boafo CRM <onboarding@resend.dev>";
 
 export const env = {
 	apiUrl,
 	appUrl,
+	resendApiKey,
 	resendFromEmail,
 	google: googleCredentials(),
 	microsoft: microsoftCredentials(),
