@@ -102,7 +102,7 @@ export function EmailPasswordSignIn() {
 					return;
 				}
 
-				const response = await fetch("/api/auth/sign-up/email", {
+				const response = await fetch("/auth/sign-up/email", {
 					method: "POST",
 					headers: { "content-type": "application/json" },
 					body: JSON.stringify({

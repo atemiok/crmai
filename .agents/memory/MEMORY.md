@@ -1,2 +1,3 @@
 - [Eve on Replit](eve-replit-sandbox.md) — Replit cannot initialize Eve's nested Docker sandbox; use the Replit-only justbash backend while preserving default backend elsewhere.
+- [Artifact API routing](artifact-api-routing.md) — published `/api` requests bypass the migrated app; keep production API routes in the API artifact or use a non-`/api` app route.
 - [Whop connection permissions](whop-connection-permissions.md) — a healthy API-key connection can still lack company-level access needed for billing provisioning.

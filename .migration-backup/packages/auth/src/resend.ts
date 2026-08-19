@@ -14,6 +14,9 @@ export async function sendResendVerificationEmail({
 	const appOrigin = new URL(env.appUrl);
 	publicUrl.protocol = appOrigin.protocol;
 	publicUrl.host = appOrigin.host;
+	if (publicUrl.pathname.startsWith("/api/auth/")) {
+		publicUrl.pathname = `/auth/${publicUrl.pathname.slice("/api/auth/".length)}`;
+	}
 
 	const response = await new ReplitConnectors().proxy("resend", "/emails", {
 		method: "POST",
