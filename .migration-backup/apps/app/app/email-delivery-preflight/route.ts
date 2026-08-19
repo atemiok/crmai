@@ -1,24 +1,15 @@
-import { ReplitConnectors } from "@replit/connectors-sdk";
+import { checkResendAvailability } from "@crm/auth";
 
 export async function GET(request: Request): Promise<Response> {
 	void request.url;
 
 	try {
-		const response = await withTimeout(
-			new ReplitConnectors().proxy("resend", "/domains", {
-				method: "GET",
-			}),
-			10_000,
-		);
+		const result = await checkResendAvailability();
+		if (result.available) return Response.json({ available: true });
 
-		if (response.ok) {
-			return Response.json({ available: true });
-		}
-
-		const details = (await response.text()).slice(0, 300);
 		console.error("[Email delivery] Resend preflight rejected", {
-			status: response.status,
-			details,
+			status: result.status,
+			details: result.details,
 		});
 	} catch (error) {
 		console.error("[Email delivery] Resend preflight failed", error);
@@ -32,16 +23,4 @@ export async function GET(request: Request): Promise<Response> {
 		},
 		{ status: 503 },
 	);
-}
-
-function withTimeout<T>(promise: Promise<T>, milliseconds: number): Promise<T> {
-	return Promise.race([
-		promise,
-		new Promise<T>((_, reject) => {
-			setTimeout(
-				() => reject(new Error("Resend preflight timed out.")),
-				milliseconds,
-			);
-		}),
-	]);
 }

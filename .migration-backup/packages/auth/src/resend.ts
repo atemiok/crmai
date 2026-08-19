@@ -106,7 +106,7 @@ async function resendRequest(
 	return withTimeout(
 		new ReplitConnectors().proxy("resend", path, {
 			...init,
-			headers,
+			headers: Object.fromEntries(headers.entries()),
 		}),
 		15_000,
 	);
