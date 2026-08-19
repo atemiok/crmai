@@ -102,6 +102,18 @@ export function EmailPasswordSignIn() {
 					return;
 				}
 
+				const emailDelivery = await fetch("/email-delivery-preflight", {
+					cache: "no-store",
+				});
+				if (!emailDelivery.ok) {
+					const emailDeliveryBody = await readResponseBody(emailDelivery);
+					setFormError(
+						extractErrorMessage(emailDeliveryBody) ??
+							"Verification email delivery is temporarily unavailable. Please try again later.",
+					);
+					return;
+				}
+
 				const response = await fetch("/auth/sign-up/email", {
 					method: "POST",
 					headers: { "content-type": "application/json" },

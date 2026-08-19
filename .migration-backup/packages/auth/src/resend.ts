@@ -18,21 +18,24 @@ export async function sendResendVerificationEmail({
 		publicUrl.pathname = `/auth/${publicUrl.pathname.slice("/api/auth/".length)}`;
 	}
 
-	const response = await new ReplitConnectors().proxy("resend", "/emails", {
-		method: "POST",
-		headers: { "content-type": "application/json" },
-		body: JSON.stringify({
-			from: env.resendFromEmail,
-			to: [to],
-			subject: "Confirm your Boafo CRM account",
-			html: verificationEmailHtml(publicUrl.toString()),
-			text: [
-				"Welcome to Boafo CRM.",
-				"Confirm your email address to finish creating your account:",
-				publicUrl.toString(),
-			].join("\n\n"),
+	const response = await withTimeout(
+		new ReplitConnectors().proxy("resend", "/emails", {
+			method: "POST",
+			headers: { "content-type": "application/json" },
+			body: JSON.stringify({
+				from: env.resendFromEmail,
+				to: [to],
+				subject: "Confirm your Boafo CRM account",
+				html: verificationEmailHtml(publicUrl.toString()),
+				text: [
+					"Welcome to Boafo CRM.",
+					"Confirm your email address to finish creating your account:",
+					publicUrl.toString(),
+				].join("\n\n"),
+			}),
 		}),
-	});
+		15_000,
+	);
 
 	if (response.ok) return;
 
@@ -66,4 +69,16 @@ function escapeHtml(value: string): string {
 		.replaceAll(">", "&gt;")
 		.replaceAll('"', "&quot;")
 		.replaceAll("'", "&#039;");
+}
+
+function withTimeout<T>(promise: Promise<T>, milliseconds: number): Promise<T> {
+	return Promise.race([
+		promise,
+		new Promise<T>((_, reject) => {
+			setTimeout(
+				() => reject(new Error("Resend email request timed out.")),
+				milliseconds,
+			);
+		}),
+	]);
 }

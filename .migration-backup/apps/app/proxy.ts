@@ -19,6 +19,7 @@ const UNGATED = ["/grant-access", "/eve"];
 const ANONYMOUS = [
 	"/t",
 	"/auth",
+	"/email-delivery-preflight",
 	"/signup-preflight",
 	"/api/signup-preflight",
 ];
