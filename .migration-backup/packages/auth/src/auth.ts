@@ -26,7 +26,11 @@ import { slackConnectGuard } from "./slack-connect";
 import { rememberSlackInstall, replaceSlackConnection } from "./slack-grant";
 import { SLACK_REQUESTED_SCOPES, SLACK_USER_SCOPES } from "./slack-scopes";
 import { queueSlackInventorySync } from "./slack-sync";
-import { sendResendVerificationEmail } from "./resend";
+import {
+	sendResendExistingAccountNotification,
+	sendResendPasswordResetEmail,
+	sendResendVerificationEmail,
+} from "./resend";
 import {
 	hasSignInAllowList,
 	isWorkspaceEmail,
@@ -43,10 +47,12 @@ const slackRedirectUri = new URL(
 const authBeforeGuard = createAuthMiddleware(async (ctx) => {
 	await slackConnectGuard(ctx);
 
+	const password =
+		ctx.path === "/reset-password" ? ctx.body?.newPassword : ctx.body?.password;
 	if (
-		ctx.path === "/sign-up/email" &&
-		typeof ctx.body?.password === "string" &&
-		!isStrongPassword(ctx.body.password)
+		(ctx.path === "/sign-up/email" || ctx.path === "/reset-password") &&
+		typeof password === "string" &&
+		!isStrongPassword(password)
 	) {
 		throw new APIError("BAD_REQUEST", {
 			message: PASSWORD_RULES_MESSAGE,
@@ -97,6 +103,21 @@ export const auth = betterAuth({
 		minPasswordLength: PASSWORD_MIN_LENGTH,
 		maxPasswordLength: PASSWORD_MAX_LENGTH,
 		requireEmailVerification: true,
+		resetPasswordTokenExpiresIn: 3600,
+		revokeSessionsOnPasswordReset: true,
+		sendResetPassword: async ({ user, url }) => {
+			await sendResendPasswordResetEmail({ to: user.email, url });
+		},
+		onExistingUserSignUp: async ({ user }) => {
+			try {
+				await sendResendExistingAccountNotification(user.email);
+			} catch (error) {
+				console.error(
+					"[Email delivery] Existing-account notification could not be sent",
+					error,
+				);
+			}
+		},
 	},
 
 	emailVerification: {

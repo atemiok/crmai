@@ -1,6 +1,10 @@
 "use client";
 
-import { sendVerificationEmail, signIn } from "@crm/auth/client";
+import {
+	requestPasswordReset,
+	sendVerificationEmail,
+	signIn,
+} from "@crm/auth/client";
 import {
 	isStrongPassword,
 	PASSWORD_MAX_LENGTH,
@@ -15,7 +19,12 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 export function EmailPasswordSignIn() {
-	const [mode, setMode] = useState<"sign-in" | "sign-up">("sign-in");
+	const [mode, setMode] = useState<
+		| "sign-in"
+		| "sign-up"
+		| "forgot-password"
+		| "resend-verification"
+	>("sign-in");
 	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
@@ -24,6 +33,9 @@ export function EmailPasswordSignIn() {
 	const [pending, setPending] = useState(false);
 	const [resendPending, setResendPending] = useState(false);
 	const [signupComplete, setSignupComplete] = useState(false);
+	const [emailActionComplete, setEmailActionComplete] = useState<
+		"forgot-password" | "resend-verification" | null
+	>(null);
 	const [formError, setFormError] = useState<string | null>(null);
 
 	async function handleResendVerification() {
@@ -71,6 +83,23 @@ export function EmailPasswordSignIn() {
 
 		try {
 			const normalizedEmail = email.trim().toLowerCase();
+
+			if (mode === "forgot-password" || mode === "resend-verification") {
+				if (mode === "forgot-password") {
+					await requestPasswordReset({
+						email: normalizedEmail,
+						redirectTo: "/reset-password",
+					});
+				} else {
+					await sendVerificationEmail({
+						email: normalizedEmail,
+						callbackURL: "/sign-in",
+					});
+				}
+
+				setEmailActionComplete(mode);
+				return;
+			}
 
 			if (mode === "sign-up") {
 				const preflight = await fetch(
@@ -207,6 +236,39 @@ export function EmailPasswordSignIn() {
 		);
 	}
 
+	if (emailActionComplete) {
+		const isPasswordReset = emailActionComplete === "forgot-password";
+
+		return (
+			<div className="flex flex-col gap-4">
+				<div className="rounded-md border border-emerald-500/30 bg-emerald-500/10 px-3 py-3 text-sm">
+					<p className="font-medium">Check your email</p>
+					<p className="mt-1 text-xs text-muted-foreground">
+						If an eligible account exists, we&apos;ll send{" "}
+						{isPasswordReset
+							? "password reset instructions shortly."
+							: "a verification link shortly."}
+					</p>
+				</div>
+
+				<button
+					type="button"
+					className="text-center text-xs text-muted-foreground underline underline-offset-4 hover:text-foreground"
+					onClick={() => {
+						setEmailActionComplete(null);
+						setMode("sign-in");
+						setFormError(null);
+					}}
+				>
+					Return to sign in
+				</button>
+			</div>
+		);
+	}
+
+	const isEmailOnlyAction =
+		mode === "forgot-password" || mode === "resend-verification";
+
 	return (
 		<div className="flex flex-col gap-4">
 			<form className="flex flex-col gap-3" onSubmit={handleSubmit}>
@@ -235,7 +297,8 @@ export function EmailPasswordSignIn() {
 					/>
 				</div>
 
-				<div className="flex flex-col gap-1.5">
+				{!isEmailOnlyAction ? (
+					<div className="flex flex-col gap-1.5">
 					<Label htmlFor="password">Password</Label>
 					<div className="relative">
 						<Input
@@ -261,7 +324,8 @@ export function EmailPasswordSignIn() {
 							{showPassword ? "Hide" : "Show"}
 						</button>
 					</div>
-				</div>
+					</div>
+				) : null}
 
 				{mode === "sign-up" ? (
 					<div className="flex flex-col gap-1.5">
@@ -308,25 +372,73 @@ export function EmailPasswordSignIn() {
 
 				<Button type="submit" disabled={pending} className="mt-1 w-full">
 					{pending ? <Spinner data-icon="inline-start" /> : null}
-					{mode === "sign-up" ? "Create account" : "Sign in with email"}
+					{mode === "sign-up"
+						? "Create account"
+						: mode === "forgot-password"
+							? "Send reset link"
+							: mode === "resend-verification"
+								? "Resend verification email"
+								: "Sign in with email"}
 				</Button>
 			</form>
 
-			<button
-				type="button"
-				className="text-center text-xs text-muted-foreground underline underline-offset-4 hover:text-foreground"
-				onClick={() => {
-					setMode(mode === "sign-in" ? "sign-up" : "sign-in");
-					setPassword("");
-					setConfirmPassword("");
-					setShowPassword(false);
-					setFormError(null);
-				}}
-			>
-				{mode === "sign-in"
-					? "New to Boafo CRM? Create an account"
-					: "Already have an account? Sign in"}
-			</button>
+			{mode === "sign-in" ? (
+				<div className="flex flex-col items-center gap-3">
+					<div className="flex items-center gap-4 text-xs text-muted-foreground">
+						<button
+							type="button"
+							className="underline underline-offset-4 hover:text-foreground"
+							onClick={() => {
+								setMode("forgot-password");
+								setPassword("");
+								setFormError(null);
+							}}
+						>
+							Forgot your password?
+						</button>
+						<button
+							type="button"
+							className="underline underline-offset-4 hover:text-foreground"
+							onClick={() => {
+								setMode("resend-verification");
+								setPassword("");
+								setFormError(null);
+							}}
+						>
+							Resend verification email
+						</button>
+					</div>
+					<button
+						type="button"
+						className="text-center text-xs text-muted-foreground underline underline-offset-4 hover:text-foreground"
+						onClick={() => {
+							setMode("sign-up");
+							setPassword("");
+							setConfirmPassword("");
+							setShowPassword(false);
+							setFormError(null);
+						}}
+					>
+						New to Boafo CRM? Create an account
+					</button>
+				</div>
+			) : (
+				<button
+					type="button"
+					className="text-center text-xs text-muted-foreground underline underline-offset-4 hover:text-foreground"
+					onClick={() => {
+						setMode("sign-in");
+						setPassword("");
+						setConfirmPassword("");
+						setShowPassword(false);
+						setFormError(null);
+					}}
+				>
+					{mode === "sign-up"
+						? "Already have an account? Sign in"
+						: "Return to sign in"}
+				</button>
+			)}
 		</div>
 	);
 }
