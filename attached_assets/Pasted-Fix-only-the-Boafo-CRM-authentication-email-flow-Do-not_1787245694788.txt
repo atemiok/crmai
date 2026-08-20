@@ -1,0 +1,58 @@
+Fix only the Boafo CRM authentication email flow.
+
+Do not restructure, convert, rename, or migrate the project.
+Do not modify the database schema.
+Do not replace Better Auth or Resend.
+Work only inside .migration-backup.
+
+Implement these changes:
+
+1. Use the existing RESEND_API_KEY and RESEND_FROM_EMAIL variables.
+
+2. In packages/auth/src/resend.ts, create one reusable email sender.
+It must send POST requests to https://api.resend.com/emails.
+Log the Resend message ID after every successful request.
+Log the response status and body after every failed request.
+
+3. Keep the existing email verification sender working.
+
+4. Add a password-reset email sender.
+Use the subject: Reset your Boafo CRM password.
+Include Better Auth's reset URL.
+State that the link expires after one hour.
+
+5. In packages/auth/src/auth.ts, configure emailAndPassword with:
+- resetPasswordTokenExpiresIn: 3600
+- revokeSessionsOnPasswordReset: true
+- sendResetPassword using the Resend password-reset sender
+- onExistingUserSignUp using a safe existing-account notification
+
+6. Export requestPasswordReset and resetPassword from packages/auth/src/client.ts.
+
+7. Update the sign-in interface with:
+- Forgot your password?
+- Resend verification email
+- Email-only forms for both actions
+- Generic success messages that do not reveal whether an account exists
+
+Use sendVerificationEmail for existing unverified accounts.
+Use requestPasswordReset with redirectTo "/reset-password".
+
+8. Create apps/app/app/(landing)/reset-password/page.tsx.
+Read token and error from searchParams.
+
+9. Create reset-password-form.tsx.
+Call resetPassword with newPassword and token.
+Preserve the existing strong-password rules.
+Show invalid, expired, success, and failure states.
+
+10. Correct generated authentication URLs.
+Public links must use https://crmai-1.replit.app/auth/.
+They must never expose /api/auth/ links.
+
+11. Do not remove signup email verification.
+Do not automatically mark users as verified.
+Do not delete existing users.
+
+Run type checking and the application build afterward.
+Report every changed file and any build error.
