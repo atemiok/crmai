@@ -46,6 +46,7 @@ export async function sendResendVerificationEmail({
 			body: JSON.stringify({
 				from: env.resendFromEmail,
 				to: [to],
+				reply_to: "info@boafosolutions.com",
 				subject: "Confirm your Boafo CRM account",
 				html: verificationEmailHtml(publicUrl.toString()),
 				text: [
@@ -56,9 +57,21 @@ export async function sendResendVerificationEmail({
 			}),
 	});
 
-	if (response.ok) return;
+	if (response.ok) {
+		const payload = (await response.json().catch(() => null)) as
+			| { id?: string }
+			| null;
+		console.info("[Email delivery] Verification email accepted by Resend", {
+			messageId: payload?.id ?? "unknown",
+		});
+		return;
+	}
 
 	const details = (await response.text()).slice(0, 300);
+	console.error("[Email delivery] Resend send failed", {
+		status: response.status,
+		details,
+	});
 	throw new Error(
 		`Resend rejected the verification email (${response.status})${details ? `: ${details}` : "."}`,
 	);

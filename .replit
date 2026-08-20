@@ -45,6 +45,7 @@ timeoutMs = 20000
 [userenv.shared]
 ALLOWED_SIGN_IN = "williamatemi@gmail.com"
 APP_URL = "https://crmai-1.replit.app"
+RESEND_FROM_EMAIL = "Boafo CRM <crm@updates.boafosolutions.com>"
 
 [nix]
 channel = "stable-25_05"
