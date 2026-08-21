@@ -6,7 +6,10 @@ async function handler(request: Request): Promise<Response> {
 	await connection();
 
 	const url = new URL(request.url);
-	const target = `${API_URL}${url.pathname}${url.search}`;
+	const upstreamPath = url.pathname.startsWith("/trpc/")
+		? `/api${url.pathname}`
+		: url.pathname;
+	const target = `${API_URL}${upstreamPath}${url.search}`;
 
 	const headers = new Headers(request.headers);
 	for (const header of [
